@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 //##-------- Изменяемые параметры --------##
-double mass = 0.005, timee = 0.0;
+double mass = 0.005, timee = 0.0, shag = 0.0;
 int gr1x = 0, gr1y = 0;
 
 //##-------- Начальные параметры --------##
@@ -27,6 +27,9 @@ const int L1x = 272, L1y = 38, L1wight = 2, L1height = 100;
 //#------ Нитка 2 ------#
 const int L2x = 223, L2y = 38, L2wight = 2, L2height = 325;
 
+
+//#------ Формулы и вычисления ------#
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -39,12 +42,28 @@ void MainWindow::on_button_start_clicked()
     timer2 = new QTimer;
     connect(timer, SIGNAL(timeout()), this, SLOT(DropGR1()));
     connect(timer2, SIGNAL(timeout()), this, SLOT(DropGR3()));
-    //connect(timer, SIGNAL(timeout()), this, SLOT(DropGR2()));
+    //connect(timer, SIGNAL(timeout()), this, SLOT(DropGR2())); - описано в падении аервого груза, так как они связаны
 
-    timer->start(20 - mass*1000);//Чем больше масса, тем быстрее падает груз
-    timer2->start(20 - mass*1000);
+    if(mass != 0.001)
+    {
+        ui->button_start->setDisabled(true);
+        ui->button_down->setDisabled(true);
+        ui->button_up->setDisabled(true);
 
-    ui->button_start->setDisabled(true);
+        //#------ Вычисления ------#
+        double M = mass, m = 0.001, g = 981;
+        double a = ((M-m)*g)/(M+m);//ускорение [см/с^2]
+        double t = sqrt((ui->stoper->y() - GR3y)/a);// Время падения груза с перевесом до стопера [сек]
+        double v = a*t;//    [см/с]
+        double h = (ui->podstavka->y() - ui->stoper->y() - ui->gruz_1->height())/2; // [см]
+        double T = h/v;  // Время падения груза до стола [сек]
+        double TT = (T*2)/h;
+
+        timer->start(TT*1000);//Чем больше масса, тем быстрее падает груз
+        timer2->start(TT*1000);
+        shag = TT;
+    }
+
 }
 
 void MainWindow::on_button_plus_clicked()
@@ -80,6 +99,7 @@ void MainWindow::on_button_up_clicked()
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()-10, ui->stoper->width(), ui->stoper->height());
     }
+    ui->label_y_pereves->setText(QString::number(ui->stoper->y() - GR3y));
 }
 
 
@@ -89,6 +109,7 @@ void MainWindow::on_button_down_clicked()
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()+10, ui->stoper->width(), ui->stoper->height());
     }
+    ui->label_y_pereves->setText(QString::number(ui->stoper->y() - GR3y));
 }
 
 
@@ -96,29 +117,38 @@ void MainWindow::on_button_reboot_clicked()
 {
     //#------ Востановление стопера ------#
     ui->stoper->setGeometry(STx, STy, ui->stoper->width(), ui->stoper->height());
+
     //#------ Востановление доп. груза ------#
     ui->gruz_3->setGeometry(GR3x, GR3y, GR3wight, GR3height);
     double *pmass = &mass;
     *pmass = GR3M;
     ui->lcd_display_massa->display(*pmass);
+
     //#------ Востановление первого груза -----#
     ui->gruz_1->setGeometry(GR1x, GR1y, GR1wight, GR1height);
+
     //#------ Востановление второго груза -----#
     ui->gruz_2->setGeometry(GR2x, GR2y, GR2wight, GR2height);
+
     //#------ Востановление таймера ------#
     double *ptimer = &timee;
     *ptimer = 0.0;
     ui->lcd_display_time->display(*ptimer);
+
     //#------ Востановление первой нити ------#
     ui->bich_1_label->setGeometry(L1x, L1y, L1wight, L1height);
+
     //#------ Востановление второй нити ------#
     ui->bich_2_label->setGeometry(L2x, L2y, L2wight, L2height);
+
     //#------ Востановление поля ввода массы ------#
     ui->button_minus->show();
     ui->button_plus->show();
 
 
     ui->button_start->setDisabled(false);
+    ui->button_down->setDisabled(false);
+    ui->button_up->setDisabled(false);
 
     timer->blockSignals(true);
 }
@@ -137,9 +167,9 @@ void MainWindow::DropGR1()
     ui->gruz_1->setGeometry(gx, gy+1,gwidth, gheight);
     ui->bich_1_label->setGeometry(lx, ly, lwidth, lheight+1);
 
-    double *ptime = &timee;
-    *ptime+=100;
-    ui->lcd_display_time->display(*ptime/1000);
+    double *ptime = &shag;
+    timee+=*ptime;
+    ui->lcd_display_time->display(timee);
     if(gy+GR1height+1>=ui->podstavka->y())
     {
         timer->blockSignals(true);
@@ -150,13 +180,10 @@ void MainWindow::DropGR3()
 {
     int gx = ui->gruz_3->x(), gy = ui->gruz_3->y(), gwidth = ui->gruz_3->width(), gheight = ui->gruz_3->height();
     ui->gruz_3->setGeometry(gx, gy+1, gwidth, gheight);
-    if(gy+GR3height+1>=ui->stoper->y())
+    if(gy+gheight+1>=ui->stoper->y())
     {
         timer2->blockSignals(true);
     }
 }
 
-double MainWindow::Yskor()
-{
 
-}

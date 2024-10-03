@@ -51,7 +51,14 @@ public:
     QPushButton *button_down;
     QLabel *stoper;
     QLabel *oskolesa;
+    QWidget *gridLayoutWidget_2;
+    QGridLayout *gridLayout_2;
+    QLabel *label;
     QLabel *valuehei;
+    QLabel *label_2;
+    QLabel *label_mass_pereves;
+    QLabel *label_y_pereves;
+    QLabel *label_y_platform;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -203,7 +210,8 @@ public:
         lcd_display_time->setFrameShape(QFrame::Shape::Box);
         lcd_display_time->setLineWidth(1);
         lcd_display_time->setMidLineWidth(0);
-        lcd_display_time->setDigitCount(8);
+        lcd_display_time->setSmallDecimalPoint(true);
+        lcd_display_time->setDigitCount(5);
         lcd_display_time->setMode(QLCDNumber::Mode::Dec);
         lcd_display_time->setSegmentStyle(QLCDNumber::SegmentStyle::Flat);
         lcd_display_time->setProperty("intValue", QVariant(0));
@@ -251,19 +259,19 @@ public:
         block_label->setGeometry(QRect(223, 10, 51, 51));
         bich_1_label = new QLabel(centralwidget);
         bich_1_label->setObjectName("bich_1_label");
-        bich_1_label->setGeometry(QRect(272, 38, 2, 100));
+        bich_1_label->setGeometry(QRect(272, 38, 2, 86));
         bich_2_label = new QLabel(centralwidget);
         bich_2_label->setObjectName("bich_2_label");
         bich_2_label->setGeometry(QRect(223, 38, 2, 325));
         gruz_1 = new QLabel(centralwidget);
         gruz_1->setObjectName("gruz_1");
-        gruz_1->setGeometry(QRect(258, 137, 30, 12));
+        gruz_1->setGeometry(QRect(258, 123, 30, 12));
         gruz_2 = new QLabel(centralwidget);
         gruz_2->setObjectName("gruz_2");
         gruz_2->setGeometry(QRect(209, 363, 30, 12));
         gruz_3 = new QLabel(centralwidget);
         gruz_3->setObjectName("gruz_3");
-        gruz_3->setGeometry(QRect(261, 130, 24, 7));
+        gruz_3->setGeometry(QRect(261, 116, 24, 7));
         blok_visoti = new QLabel(centralwidget);
         blok_visoti->setObjectName("blok_visoti");
         blok_visoti->setGeometry(QRect(434, 400, 60, 151));
@@ -294,9 +302,42 @@ public:
         oskolesa = new QLabel(centralwidget);
         oskolesa->setObjectName("oskolesa");
         oskolesa->setGeometry(QRect(238, 26, 21, 21));
-        valuehei = new QLabel(centralwidget);
+        gridLayoutWidget_2 = new QWidget(centralwidget);
+        gridLayoutWidget_2->setObjectName("gridLayoutWidget_2");
+        gridLayoutWidget_2->setGeometry(QRect(320, 50, 160, 80));
+        gridLayout_2 = new QGridLayout(gridLayoutWidget_2);
+        gridLayout_2->setObjectName("gridLayout_2");
+        gridLayout_2->setContentsMargins(0, 0, 0, 0);
+        label = new QLabel(gridLayoutWidget_2);
+        label->setObjectName("label");
+
+        gridLayout_2->addWidget(label, 1, 0, 1, 1);
+
+        valuehei = new QLabel(gridLayoutWidget_2);
         valuehei->setObjectName("valuehei");
-        valuehei->setGeometry(QRect(370, 50, 37, 12));
+
+        gridLayout_2->addWidget(valuehei, 0, 0, 1, 1);
+
+        label_2 = new QLabel(gridLayoutWidget_2);
+        label_2->setObjectName("label_2");
+
+        gridLayout_2->addWidget(label_2, 2, 0, 1, 1);
+
+        label_mass_pereves = new QLabel(gridLayoutWidget_2);
+        label_mass_pereves->setObjectName("label_mass_pereves");
+
+        gridLayout_2->addWidget(label_mass_pereves, 0, 1, 1, 1);
+
+        label_y_pereves = new QLabel(gridLayoutWidget_2);
+        label_y_pereves->setObjectName("label_y_pereves");
+
+        gridLayout_2->addWidget(label_y_pereves, 1, 1, 1, 1);
+
+        label_y_platform = new QLabel(gridLayoutWidget_2);
+        label_y_platform->setObjectName("label_y_platform");
+
+        gridLayout_2->addWidget(label_y_platform, 2, 1, 1, 1);
+
         MainWindow->setCentralWidget(centralwidget);
         bich_1_label->raise();
         bich_2_label->raise();
@@ -315,7 +356,7 @@ public:
         button_down->raise();
         stoper->raise();
         oskolesa->raise();
-        valuehei->raise();
+        gridLayoutWidget_2->raise();
 
         retranslateUi(MainWindow);
 
@@ -348,7 +389,12 @@ public:
         button_down->setText(QCoreApplication::translate("MainWindow", "DOWN", nullptr));
         stoper->setText(QString());
         oskolesa->setText(QString());
-        valuehei->setText(QCoreApplication::translate("MainWindow", "Value:", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Y \320\277\320\265\321\200\320\265\320\262\320\265\321\201\320\272\320\260:", nullptr));
+        valuehei->setText(QCoreApplication::translate("MainWindow", "\320\234\320\260\321\201\321\201\320\260 \320\277\320\265\321\200\320\265\320\262\320\265\321\201\320\272\320\260:", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Y \321\201\321\202\320\276\320\273\320\270\320\272\320\260: ", nullptr));
+        label_mass_pereves->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
+        label_y_pereves->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
+        label_y_platform->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
     } // retranslateUi
 
 };

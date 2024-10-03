@@ -230,8 +230,11 @@ color:white;
        <property name="midLineWidth">
         <number>0</number>
        </property>
+       <property name="smallDecimalPoint">
+        <bool>true</bool>
+       </property>
        <property name="digitCount">
-        <number>8</number>
+        <number>5</number>
        </property>
        <property name="mode">
         <enum>QLCDNumber::Mode::Dec</enum>
@@ -339,7 +342,7 @@ color:white;
       <x>272</x>
       <y>38</y>
       <width>2</width>
-      <height>100</height>
+      <height>86</height>
      </rect>
     </property>
     <property name="text">
@@ -363,7 +366,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>258</x>
-      <y>137</y>
+      <y>123</y>
       <width>30</width>
       <height>12</height>
      </rect>
@@ -389,7 +392,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>261</x>
-      <y>130</y>
+      <y>116</y>
       <width>24</width>
       <height>7</height>
      </rect>
@@ -492,18 +495,59 @@ border-radius: 5px;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="valuehei">
+   <widget class="QWidget" name="gridLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>320</x>
       <y>50</y>
-      <width>37</width>
-      <height>12</height>
+      <width>160</width>
+      <height>80</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Value:</string>
-    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Y перевеска:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="valuehei">
+       <property name="text">
+        <string>Масса перевеска:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Y столика: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_mass_pereves">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_y_pereves">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_y_platform">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <zorder>bich_1_label</zorder>
    <zorder>bich_2_label</zorder>
@@ -522,7 +566,7 @@ border-radius: 5px;</string>
    <zorder>button_down</zorder>
    <zorder>stoper</zorder>
    <zorder>oskolesa</zorder>
-   <zorder>valuehei</zorder>
+   <zorder>gridLayoutWidget_2</zorder>
   </widget>
  </widget>
  <resources/>

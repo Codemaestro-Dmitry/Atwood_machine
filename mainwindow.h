@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include<QTime>
 #include<QTimer>
+#include<cmath>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,8 +36,6 @@ private slots:
     void DropGR1();
 
     void DropGR3();
-
-    double Yskor();
 
 
 private:
