@@ -1,6 +1,8 @@
+//#------ Подключение заголовочных файлов ------#
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+//#------ Описание конструктора класса MainWindow ------#
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -8,27 +10,39 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 }
 
+//#------ Переменная для проверки нажатия кнопки "старта" ------#
+//Необходима для того, чтобы исключить нажатие "сброс" в самом начале.
+//Функцианал кнопки "сброс" реализован ниже в функции "void MainWindow::on_button_reboot_clicked()"
+bool test = false;
+
+
 //##-------- Изменяемые параметры --------##
+//Переменные, которые будут изменяться по ходу работы программы
 double mass = 0.005, timee = 0.0, shag = 0.0;
 int gr1x = 0, gr1y = 0;
+        // mass  - масса груза с перевесом
+        // timee - время падения груза после снятия перевеса до земли
+        // shag  -
+        // gr1x  -
+        // gr1y  -
 
 //##-------- Начальные параметры --------##
 //#------ Стопер ------#
 const int STx = 243, STy = 217;
 //#------ Доп. груз ------#
-const int GR3x = 261, GR3y = 130, GR3height = 7, GR3wight = 24;
+const int GR3x = 261, GR3y = 113, GR3height = 7, GR3wight = 24;
 const double GR3M = 0.005;
 //#------ Первый груз ------#
-const int GR1x = 258, GR1y = 137, GR1wight = 30, GR1height = 12;
+const int GR1x = 258, GR1y = 120, GR1wight = 30, GR1height = 12;
 //#------ Второй груз ------#
 const int GR2x= 209, GR2y = 363, GR2wight = 30, GR2height = 12;
 //#------ Нитка 1 ------#
-const int L1x = 272, L1y = 38, L1wight = 2, L1height = 100;
+const int L1x = 272, L1y = 38, L1wight = 2, L1height = 86;
 //#------ Нитка 2 ------#
 const int L2x = 223, L2y = 38, L2wight = 2, L2height = 325;
 
 
-//#------ Формулы и вычисления ------#
+double ShagTT = 0; //Переменная для постепенного изменения скорости падения
 
 MainWindow::~MainWindow()
 {
@@ -42,7 +56,6 @@ void MainWindow::on_button_start_clicked()
     timer2 = new QTimer;
     connect(timer, SIGNAL(timeout()), this, SLOT(DropGR1()));
     connect(timer2, SIGNAL(timeout()), this, SLOT(DropGR3()));
-    //connect(timer, SIGNAL(timeout()), this, SLOT(DropGR2())); - описано в падении аервого груза, так как они связаны
 
     if(mass != 0.001)
     {
@@ -63,7 +76,7 @@ void MainWindow::on_button_start_clicked()
         timer2->start(TT*1000);
         shag = TT;
     }
-
+    test = true;
 }
 
 void MainWindow::on_button_plus_clicked()
@@ -99,7 +112,6 @@ void MainWindow::on_button_up_clicked()
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()-10, ui->stoper->width(), ui->stoper->height());
     }
-    ui->label_y_pereves->setText(QString::number(ui->stoper->y() - GR3y));
 }
 
 
@@ -109,48 +121,49 @@ void MainWindow::on_button_down_clicked()
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()+10, ui->stoper->width(), ui->stoper->height());
     }
-    ui->label_y_pereves->setText(QString::number(ui->stoper->y() - GR3y));
 }
 
 
 void MainWindow::on_button_reboot_clicked()
 {
-    //#------ Востановление стопера ------#
-    ui->stoper->setGeometry(STx, STy, ui->stoper->width(), ui->stoper->height());
+    if(test == 1)
+    {
+        //#------ Востановление стопера ------#
+        ui->stoper->setGeometry(STx, STy, ui->stoper->width(), ui->stoper->height());
 
-    //#------ Востановление доп. груза ------#
-    ui->gruz_3->setGeometry(GR3x, GR3y, GR3wight, GR3height);
-    double *pmass = &mass;
-    *pmass = GR3M;
-    ui->lcd_display_massa->display(*pmass);
+        //#------ Востановление доп. груза ------#
+        ui->gruz_3->setGeometry(GR3x, GR3y, GR3wight, GR3height);
+        double *pmass = &mass;
+        *pmass = GR3M;
+        ui->lcd_display_massa->display(*pmass);
 
-    //#------ Востановление первого груза -----#
-    ui->gruz_1->setGeometry(GR1x, GR1y, GR1wight, GR1height);
+        //#------ Востановление первого груза -----#
+        ui->gruz_1->setGeometry(GR1x, GR1y, GR1wight, GR1height);
 
-    //#------ Востановление второго груза -----#
-    ui->gruz_2->setGeometry(GR2x, GR2y, GR2wight, GR2height);
+        //#------ Востановление второго груза -----#
+        ui->gruz_2->setGeometry(GR2x, GR2y, GR2wight, GR2height);
 
-    //#------ Востановление таймера ------#
-    double *ptimer = &timee;
-    *ptimer = 0.0;
-    ui->lcd_display_time->display(*ptimer);
+        //#------ Востановление таймера ------#
+        double *ptimer = &timee;
+        *ptimer = 0.0;
+        ui->lcd_display_time->display(*ptimer);
 
-    //#------ Востановление первой нити ------#
-    ui->bich_1_label->setGeometry(L1x, L1y, L1wight, L1height);
+        //#------ Востановление первой нити ------#
+        ui->bich_1_label->setGeometry(L1x, L1y, L1wight, L1height);
 
-    //#------ Востановление второй нити ------#
-    ui->bich_2_label->setGeometry(L2x, L2y, L2wight, L2height);
+        //#------ Востановление второй нити ------#
+        ui->bich_2_label->setGeometry(L2x, L2y, L2wight, L2height);
 
-    //#------ Востановление поля ввода массы ------#
-    ui->button_minus->show();
-    ui->button_plus->show();
+        //#------ Востановление поля ввода массы ------#
+        ui->button_minus->show();
+        ui->button_plus->show();
 
+        ui->button_start->setDisabled(false);
+        ui->button_down->setDisabled(false);
+        ui->button_up->setDisabled(false);
 
-    ui->button_start->setDisabled(false);
-    ui->button_down->setDisabled(false);
-    ui->button_up->setDisabled(false);
-
-    timer->blockSignals(true);
+        if(timer->isActive())timer->blockSignals(true);
+    }
 }
 
 void MainWindow::DropGR1()
@@ -168,8 +181,11 @@ void MainWindow::DropGR1()
     ui->bich_1_label->setGeometry(lx, ly, lwidth, lheight+1);
 
     double *ptime = &shag;
-    timee+=*ptime;
-    ui->lcd_display_time->display(timee);
+    if(ui->stoper->y()<=ui->gruz_1->y())
+    {
+        timee+=*ptime;
+        ui->lcd_display_time->display(timee);
+    }
     if(gy+GR1height+1>=ui->podstavka->y())
     {
         timer->blockSignals(true);
