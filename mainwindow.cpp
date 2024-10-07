@@ -108,7 +108,7 @@ void MainWindow::on_button_minus_clicked()
 
 void MainWindow::on_button_up_clicked()
 {
-    if(ui->stoper->y()>=ui->gruz_3->y()+ui->gruz_3->height()+ui->stoper->height())
+    if(ui->stoper->y() - 10>=ui->gruz_3->y()+ui->gruz_3->height()+ui->stoper->height())
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()-10, ui->stoper->width(), ui->stoper->height());
     }
