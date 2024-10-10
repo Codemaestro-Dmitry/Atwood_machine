@@ -16,12 +16,19 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Машина Атвуда</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resorces.qrc">
+    <normaloff>:/icon/icons/pixil-frame-0 (1).png</normaloff>:/icon/icons/pixil-frame-0 (1).png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">#MainWindow{
-	
 	background-color: rgb(215, 215, 215);
+	
+	
+	background-color: rgb(55, 0, 69);
+	background-color: rgb(94, 85, 213);
 }
 #podstavka{
 	background-color: rgb(161, 161, 161);
@@ -1289,6 +1296,8 @@ border-radius: 5px;</string>
    <zorder>line_30</zorder>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resorces.qrc"/>
+ </resources>
  <connections/>
 </ui>

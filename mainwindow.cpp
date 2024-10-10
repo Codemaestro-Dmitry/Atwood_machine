@@ -22,13 +22,13 @@ double mass = 0.005, timee = 0.0, shag = 0.0;
 int gr1x = 0, gr1y = 0;
         // mass  - масса груза с перевесом
         // timee - время падения груза после снятия перевеса до земли
-        // shag  -
+        // shag  - переменная для постепенного вывода времени
         // gr1x  -
         // gr1y  -
 
 //##-------- Начальные параметры --------##
 //#------ Стопер ------#
-const int STx = 243, STy = 217;
+const int STx = 243, STy = 210;
 //#------ Доп. груз ------#
 const int GR3x = 261, GR3y = 113, GR3height = 7, GR3wight = 24;
 const double GR3M = 0.005;
@@ -44,24 +44,31 @@ const int L2x = 223, L2y = 38, L2wight = 2, L2height = 325;
 
 double ShagTT = 0; //Переменная для постепенного изменения скорости падения
 
+//#------ Деструктор для очищения выделенной памяти ------#
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+
+//#------ Слот, описывающий функционал кнопки "пуск" ------#
 void MainWindow::on_button_start_clicked()
 {
 
-    timer = new QTimer();
-    timer2 = new QTimer;
-    connect(timer, SIGNAL(timeout()), this, SLOT(DropGR1()));
-    connect(timer2, SIGNAL(timeout()), this, SLOT(DropGR3()));
+    timer = new QTimer();       //Выделение памяти под тймер(специальный класс QT)
+    timer2 = new QTimer;        //Выделение памяти под таймер(второй)
+    connect(timer, SIGNAL(timeout()), this, SLOT(DropGR1())); //Подключение таймера к слоту падения грузов
+    connect(timer2, SIGNAL(timeout()), this, SLOT(DropGR3())); //Подключение второго таймера к слоту падения перевеса
 
+    //Проверка массы, так как если не будет перевеса, то система будет в покое
     if(mass != 0.001)
     {
+        //Отключение клавиш во время запуска установки
         ui->button_start->setDisabled(true);
         ui->button_down->setDisabled(true);
         ui->button_up->setDisabled(true);
+        ui->button_plus->setDisabled(true);
+        ui->button_minus->setDisabled(true);
 
         //#------ Вычисления ------#
         double M = mass, m = 0.001, g = 981;
@@ -70,11 +77,11 @@ void MainWindow::on_button_start_clicked()
         double v = a*t;//    [см/с]
         double h = (ui->podstavka->y() - ui->stoper->y() - ui->gruz_1->height())/2; // [см]
         double T = h/v;  // Время падения груза до стола [сек]
-        double TT = (T*2)/h;
+        double VV = (T*2)/h; //Скорость падения
 
-        timer->start(TT*1000);//Чем больше масса, тем быстрее падает груз
-        timer2->start(TT*1000);
-        shag = TT;
+        timer->start(VV*1000);//Чем больше масса, тем быстрее падает груз
+        timer2->start(VV*1000);
+        shag = VV;
     }
     test = true;
 }
@@ -114,10 +121,10 @@ void MainWindow::on_button_up_clicked()
     }
 }
 
-
+//Слот опускания стопера(1 нажатие = 5см, 10px = 5см)
 void MainWindow::on_button_down_clicked()
 {
-    if(ui->stoper->y()<=317)
+    if(ui->stoper->y()<=317)//Ограничение минимальной высоты стопера
     {
         ui->stoper->setGeometry(ui->stoper->x(),ui->stoper->y()+10, ui->stoper->width(), ui->stoper->height());
     }
@@ -126,7 +133,7 @@ void MainWindow::on_button_down_clicked()
 
 void MainWindow::on_button_reboot_clicked()
 {
-    if(test == 1)
+    if(test == 1)//Защита от нажатия кнопки в начале(почему-то иначе программа ломается и закрывается)
     {
         //#------ Востановление стопера ------#
         ui->stoper->setGeometry(STx, STy, ui->stoper->width(), ui->stoper->height());
@@ -158,32 +165,37 @@ void MainWindow::on_button_reboot_clicked()
         ui->button_minus->show();
         ui->button_plus->show();
 
+        //Разблокировка клавиш, при сбросе установки
         ui->button_start->setDisabled(false);
         ui->button_down->setDisabled(false);
         ui->button_up->setDisabled(false);
+        ui->button_plus->setDisabled(false);
+        ui->button_minus->setDisabled(false);
 
+        //Проверка, в каком состоянии процесс программы. Если программма активна, останавливаем
         if(timer->isActive())timer->blockSignals(true);
     }
 }
 
 void MainWindow::DropGR1()
 {
+    //Запись значений элементов в переменные для удобства работы с ними(чтобы не писать постоянно ui->...)
     int gx = ui->gruz_1->x(), gy = ui->gruz_1->y(), gwidth = ui->gruz_1->width(), gheight = ui->gruz_1->height();
     int lx = ui->bich_1_label->x(), ly = ui->bich_1_label->y(), lwidth = ui->bich_1_label->width(), lheight = ui->bich_1_label->height();
 
     int gx2 = ui->gruz_2->x(), gy2 = ui->gruz_2->y(), gwidth2 = ui->gruz_2->width(), gheight2 = ui->gruz_2->height();
     int lx2 = ui->bich_2_label->x(), ly2 = ui->bich_2_label->y(), lwidth2 = ui->bich_2_label->width(), lheight2 = ui->bich_2_label->height();
 
+    //Изменение положения 1ого и 2ого грузов и обеих нитей
     ui->gruz_2->setGeometry(gx2, gy2-1,gwidth2, gheight2);
     ui->bich_2_label->setGeometry(lx2, ly2, lwidth2, lheight2-1);
 
     ui->gruz_1->setGeometry(gx, gy+1,gwidth, gheight);
     ui->bich_1_label->setGeometry(lx, ly, lwidth, lheight+1);
 
-    double *ptime = &shag;
     if(ui->stoper->y()<=ui->gruz_1->y())
     {
-        timee+=*ptime;
+        timee+=shag;
         ui->lcd_display_time->display(timee);
     }
     if(gy+GR1height+1>=ui->podstavka->y())
